@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <title>pokemonGame</title>
+        <link rel="stylesheet" href="style.css">
+        <link href="http://fonts.cdnfonts.com/css/pokemon-solid" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/41b8da89ad.js" crossorigin="anonymous"></script>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <header class="header">
+            <h1 class="header-title">PokemonGame</h1>
+            <div class="header-user">
+                <img class="user-icon" src="img/userIcon.svg" alt="userAlt">
+                <p class="user-name">userName</p>
+            </div>
+        </header>
+        <div class="card-container">
+            <template class="template">
+                <div class="card fade-in up">
+                    <div class="pokemon-img-container">
+                        <img class="pokemon-img" src="" alt="pokemonImg">
+                        <div class="type pokemon-type1"></div>
+                    </div>
+                    <div class="pokemon-descr">
+                        <h2 class="pokemon-name"></h2>
+                        <div class="stats">
+                            <div class="type pokemon-type2"></div>
+                            <span class="pokemon-life"></span>
+                            <span class="pokemon-attack"></span>
+                            <span class="pokemon-defense"></span>
+                            <span class="pokemon-s-attack"></span>
+                            <span class="pokemon-speed"></span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <script type = "module" src="modules/css.js"></script>
+        <script type = "module" src="modules/pokemonCard.js"></script>
+        <script type = "module" src="app.js"></script>
+    </body>
+</html>
