@@ -1,4 +1,4 @@
-import { appear } from "./css.js";
+import { appear, zoom, translateCard } from "./css.js";
 
 export function drawPokemon(pokemons) {
 
@@ -55,21 +55,10 @@ function drawTemplate(pokemon, templateClone) {
         templateClone.querySelector(".card").classList.add(type1+"-background");
     }
 
-    appear(cardShow);
+    appear(cardShow);   
 
-
-    function zoom(event) {
-        let myTarget = event.currentTarget;
-        if (myTarget.classList.contains('up')) {
-            myTarget.classList.add('move')
-            myTarget.classList.remove('up')
-        } else {
-            myTarget.classList.remove('move')
-            myTarget.classList.add('up')
-        }
-    }
-
-    card.addEventListener("click", zoom);
+    //card.addEventListener("click", zoom);
+    card.addEventListener("click", translateCard);
     
     //console.log(card.cloneNode(true));
     cardContainer.appendChild(templateClone);
