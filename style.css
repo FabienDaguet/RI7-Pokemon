@@ -1,8 +1,14 @@
-
+/*----GENERAL----*/
 
 * {
     box-sizing: border-box;
 }
+
+.hidden {
+    display: none;
+}
+
+/*----BODY----*/
 
 body {
     margin: 0;

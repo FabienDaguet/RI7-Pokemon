@@ -1,11 +1,8 @@
-import { drawPokemon } from "./pokemonCard.js";
-export let limit = 8;
+export let limit = 64;
 export let offMultiplicator = 0;
-export async function getPokemon(url) {
-    let res = await fetch(url)
-    let data = await res.json()
-        
-    drawPokemon(data)
-    offMultiplicator +=1;
-        
+export function getPokemon(url) {
+    let res = fetch(url).then(result => result.json());
+    offMultiplicator += 1;
+    //console.log('api', res)
+    return res;
 }

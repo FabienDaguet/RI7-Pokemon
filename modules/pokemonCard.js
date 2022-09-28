@@ -1,22 +1,30 @@
-import { appear, zoom, translateCard } from "./css.js";
+import { appear, translateCard } from "./css.js";
+let pokemonPromises=[]
 
 export function drawPokemon(pokemons) {
-
-    let template = document.querySelector(".template");
-
+    console.log('list pokemon: '+pokemons.results);
     for(let i = 0; i < pokemons.results.length; i++){
-        let templateClone = document.importNode(template.content, true)
-
-        fetch(pokemons.results[i].url)
-        .then(response => response.json())
-        .then(data => {
-            data;
-            drawTemplate(data, templateClone)
-        });
+        pokemonPromises.push(
+            fetch(pokemons.results[i].url)
+                .then(response => response.json())
+                .then(data =>data)
+        )   
     }    
+    Promise.all(pokemonPromises).then(allPokemons => {
+        for(let pokemon of allPokemons) {
+            drawTemplate(pokemon);
+        }
+        //console.log('result',allPokemons)
+        pokemonPromises=[]
+    })
 }
 
-function drawTemplate(pokemon, templateClone) {    
+//Fonction qui va chainer les appels a l'api pokemon pour 1 pokemon 
+
+
+function drawTemplate(pokemon) {    
+    let template = document.querySelector(".template");
+    let templateClone = document.importNode(template.content, true)
 
     let cardContainer = document.querySelector(".card-container");
     let cardShow = templateClone.querySelector('.fade-in');
