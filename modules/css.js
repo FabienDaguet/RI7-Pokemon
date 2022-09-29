@@ -1,8 +1,10 @@
 "use-strict";
+let buttons = document.querySelectorAll('.button-header');
+let pokedex = document.querySelector('.card-container');
+let arena = document.querySelector('.arenaContainer');
 
 export function appear(card) {
     let fader = card;
-
     let appearOptions = {
         rootMargin: '0px',
         threshold: 1
@@ -90,3 +92,16 @@ export function translateCard(event) {
         }
     `);
 }
+
+/* function view(event) {
+    myTarget = event.currentTarget;
+    if(myTarget.classList.contains('button-arena')) {
+        pokedex.classList.add('hidden');
+        arena.classList.remove('hidden');
+    } else if(myTarget.classList.contains('button-poke')) {
+        arena.classList.add('hidden');
+        pokedex.classList.remove('hidden');
+    }
+}
+
+buttons.addEventListener('click', view) */

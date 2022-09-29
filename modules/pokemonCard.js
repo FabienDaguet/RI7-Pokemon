@@ -2,7 +2,7 @@ import { appear, translateCard } from "./css.js";
 let pokemonPromises=[]
 
 export function drawPokemon(pokemons) {
-    console.log('list pokemon: '+pokemons.results);
+    //console.log('list pokemon: '+pokemons.results);
     for(let i = 0; i < pokemons.results.length; i++){
         pokemonPromises.push(
             fetch(pokemons.results[i].url)
