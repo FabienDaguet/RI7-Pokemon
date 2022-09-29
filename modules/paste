@@ -1,0 +1,162 @@
+let canvas = document.querySelector(".canvas");
+let ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth / 1.5;
+canvas.height = window.innerHeight / 1.5;
+
+let collisionsMap = [];
+
+// Création du tableau 2d pour les collisions
+// 70 = nomhre de tile dans la largeur de ma map, déffini lors de la craétion de ma map
+for (let i = 0; i < collisions.length; i += 70) {
+    // i premier argument où je veux slice, 70 eme argument
+    collisionsMap.push(collisions.slice(i, 70 + i));
+}
+
+console.log(collisionsMap);
+
+// creation d'objet pour collisions
+class Boundary {
+    static width = 36;
+    static height = 36;
+    constructor({position}) {
+        this.position = position
+        this.width = 36 // 36px = 12px lors de la création de la map & x 3 car 300% zoom lors de map export 
+        this.height = 36
+    }
+    draw() {
+        ctx.fillStyle = 'red' //color les zones de collisions
+        ctx.fillRect(this.position.x, this.position.y, this.position.width, this.position.y)
+    }
+}
+
+// stocke toutes nos limites à utiliser
+let boundaries = [];
+
+collisionsMap.forEach((row, i) => {         // i représente l'index de chaque ligne        j
+    row.forEach((symbol, j) => {            // j représente l'index des symbols         i [0,1,1,0]
+        if (symbol === 1025)
+            boundaries.push(new Boundary({
+                position: {
+                    x: j * Boundary.width,
+                    y: i * Boundary.height
+                }
+            }
+        ))
+    })
+})
+
+console.log(boundaries);
+
+//Création de nouvelles image (ici la map)
+let image = new Image();
+image.src =  "../img/map.png";
+
+let playerImage = new Image();
+playerImage.src = "../img/ACharDown.png";
+
+
+class Sprite {
+    constructor({position, velocity, image}) {
+        this.position = position
+        this.image = image
+    }
+    draw() {
+        ctx.drawImage(this.image, this.position.x, this.position.y);
+    }
+}
+
+// Création d'un Sprite afin de géré l'état du background
+let background = new Sprite({
+    position: {
+        x: -370,
+        y: -200
+    },
+    image: image
+})
+
+// Défini les touches utilisé et leur état
+let keys = {
+    z: {
+        pressed: false
+    },
+    s: {
+        pressed: false
+    },
+    q: {
+        pressed: false
+    },
+    d: {
+        pressed: false
+    }
+}
+
+
+//Fait le rendus 
+function animate() {
+    window.requestAnimationFrame(animate);
+    background.draw();
+    boundaries.forEach(boundary => {
+        boundary.draw();
+    })
+    ctx.drawImage(
+        playerImage,
+        0, //position x départ crop
+        0, // positon y départ crop
+        playerImage.width / 2, // w de division de crop
+        playerImage.height / 2, // y de division de crop
+        canvas.width /2 - playerImage.width / 2, // position en x de l'image
+        canvas.height /2 - playerImage.height / 2, // position en y de l'image
+        playerImage.width * 1.5,    // taille actuelle en largeur
+        playerImage.height * 1.5,   // taille actuelle en hauteur
+    );
+
+    //Change la position du backgroud en fonction de la touche appuyé et de la dernoère enregistré
+    if(keys.z.pressed && lastKey === 'z') background.position.y += 3;
+    else if(keys.q.pressed && lastKey === 'q') background.position.x += 3;
+    else if(keys.d.pressed && lastKey === 'd') background.position.x -= 3;
+    else if(keys.s.pressed && lastKey === 's') background.position.y -= 3;
+}
+animate();
+
+let lastKey= '' //enregistre la dernière touche pressé
+
+//Passe keys.touche.pressed à true
+window.addEventListener('keydown', (e)  => {
+    switch (e.key) {
+        case 'z':
+            keys.z.pressed = true 
+            lastKey = 'z'           
+            break
+        case 's':
+            keys.s.pressed = true            
+            lastKey = 's'           
+            break
+        case 'q':
+            keys.q.pressed = true            
+            lastKey = 'q'           
+            break
+        case 'd':
+            keys.d.pressed = true            
+            lastKey = 'd'           
+            break
+    }
+    //console.log(keys.z.pressed)
+})
+
+//Remet keys.touche.pressed à false lorsque l'on appuie plus sur la touche
+window.addEventListener('keyup', (e)  => {
+    switch (e.key) {
+        case 'z':
+            keys.z.pressed = false            
+            break
+        case 's':
+            keys.s.pressed = false            
+            break
+        case 'q':
+            keys.q.pressed = false            
+            break
+        case 'd':
+            keys.d.pressed = false            
+            break
+    }
+})
