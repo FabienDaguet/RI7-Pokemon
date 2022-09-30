@@ -38,7 +38,7 @@ export function translateCard(event) {
     let x = vw.toPrecision(2) * 100
     let dynamicStyles = null;
 
-    myTarget.style.animation = 'translate 3s forwards';
+    myTarget.style.animation = 'up 0.5 ease forward';
     myTarget.style.top = y;
     myTarget.style.left = x;
 
@@ -51,6 +51,21 @@ export function translateCard(event) {
     
         dynamicStyles.sheet.insertRule(body, dynamicStyles.length);
     }
+
+    addAnimation(`
+        @keyframes up { 
+            0% {
+                transform-origin: center; 
+            }
+            50% {
+                box-shadow: 10px 10px 10px rgba(69, 69, 69, 0.817);
+            }
+            100% {
+                transform: perspective(200px) translate3d(-1rem, -1rem, 1rem); 
+                z-index: 3;
+            }
+        }
+    `);
     
     addAnimation(`
         @keyframes translate { 

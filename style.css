@@ -276,11 +276,21 @@ body {
     display: flex;
     justify-content: center;
     margin-top: 2rem;
+    z-index: 999;
+}
+
+.arena-battle {
+    position: relative;
+    background: #191919;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .canvas {
-    position: relative;
+    position: absolute;
     border: 1px solid black;
+    z-index: 1;
 }
 
 @keyframes identifier {

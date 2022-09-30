@@ -1,7 +1,11 @@
 let canvas = document.querySelector(".canvas");
+let transiImg = document.querySelector(".transition-battle");
 let ctx = canvas.getContext("2d");
+
 canvas.width = window.innerWidth / 1.5;
 canvas.height = window.innerHeight / 1.5;
+transiImg.width = canvas.width;
+transiImg.height = canvas.height;
 
 let collisionsMap = [];
 
@@ -12,29 +16,20 @@ for (let i = 0; i < collisions.length; i += 70) {
     collisionsMap.push(collisions.slice(i, 70 + i));
 }
 
-//console.log(collisionsMap);
-
-// creation d'objet pour collisions
-class Boundary {
-    static width = 36;
-    static height = 36;
-    constructor({position}) {
-        this.position = position;
-        this.width = 36; // 36px = 12px lors de la création de la map & x 3 car 300% zoom lors de map export 
-        this.height = 36;
-    }
-    draw() {
-        ctx.fillStyle = 'red' //color les zones de collisions
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
-    }
+let battleZonesMap = [];
+for (let i = 0; i < battleZonesData.length; i += 70) {
+    battleZonesMap.push(battleZonesData.slice(i, 70 + i));
 }
+console.log(battleZonesMap);
+
+//console.log(battleZonesMap);
 
 // stocke toutes nos limites à utiliser
 let boundaries = [];
 let offset = {
     x: -370,
     y: -200
-}
+};
 
 collisionsMap.forEach((row, i) => {         // i représente l'index de chaque ligne        j
     row.forEach((symbol, j) => {            // j représente l'index des symbols         i [0,1,1,0]
@@ -47,8 +42,21 @@ collisionsMap.forEach((row, i) => {         // i représente l'index de chaque l
             }
         ))
     })
-})
+});
 
+let battleZones = [];
+battleZonesMap.forEach((row, i) => {
+    row.forEach((symbol, j) => {
+        if (symbol === 1025)
+            battleZones.push(new Boundary({
+                position: {
+                    x: j * Boundary.width + offset.x,
+                    y: i * Boundary.height + offset.y
+                }
+            }
+        ))
+    })
+});
 //console.log(boundaries);
 
 //Création de nouvelles image (ici la map)
@@ -58,33 +66,7 @@ mapImage.src =  "../img/map.png";
 let playerImage = new Image();
 playerImage.src = "../img/playerDown.png";
 
-class Sprite {
-    constructor({position, velocity, image, frames = {max: 1}}) {
-        this.position = position
-        this.image = image
-        this.frames = frames
-        this.image.onload = () => {
-            // set largeur (et hauteur) image à la largeur de une seule frame.
-            // Sinon la collision sera bug car largeur réel de l'image est de x 4
-            // A faire seulement quand l'image est load d'où onload()
-            this.width = this.image.width / this.frames.max;
-            this.height = this.image.height;
-        }
-    }
-    draw() {
-        ctx.drawImage(
-            this.image,
-            0, //position x départ crop gauche
-            0, // positon y départ crop top
-            this.image.width / this.frames.max, // w de division de crop
-            this.image.height, // y de division de crop
-            this.position.x,
-            this.position.y,
-            this.image.width / this.frames.max,    // taille actuelle en largeur
-            this.image.height,   // taille actuelle en hauteur
-        );
-    }
-}
+
 
 let player = new Sprite({
     position: {
@@ -130,17 +112,22 @@ let keys = {
     }
 }) */
 
-// tableau permettant de simplifier le code dans mon if else
-let movables = [background, ...boundaries/* testBoundary */]
+// tableau permettant de simplifier le code dans mon if else activation du combat
+let movables = [background, ...boundaries, ...battleZones /* testBoundary */]
 
 // 1er paramètre = player, 2eme paramètre le rectangle de collision
+// check la postion du player par rapport au zones de collisions
 function rectangularCollision({rectangle1, rectangle2}) {
     return(
         rectangle1.position.x + rectangle1.width >= rectangle2.position.x &&     // coté droit du player >= coté gauche de la box
-        rectangle1.position.x <= rectangle2.position.x + rectangle2.width &&    //coté gauche du player >= coté droit de la box
+        rectangle1.position.x <= rectangle2.position.x + rectangle2.width &&    // coté gauche du player >= coté droit de la box
         rectangle1.position.y <= rectangle2.position.y + rectangle2.height &&   // top du player <= bas de la box
         rectangle1.position.y + rectangle1.height >= rectangle2.position.y     // bas du player >= au top de la box
     )
+}
+// Pas de rencontre.
+let battle = {
+    initiated: false
 }
 
 //Fait le rendus 
@@ -150,10 +137,64 @@ function animate() {
     boundaries.forEach(boundary => {
         boundary.draw();
     })
+    battleZones.forEach(battleZone => {
+        battleZone.draw();
+    })
     //testBoundary.draw();  testing
-
-    
     player.draw()
+
+    // combat rencontré, je n'execute le code qui suit j'arrete donc de me déplacer.
+    if (battle.initiated) return
+
+    // activation du combat
+    if(keys.z.pressed || keys.q.pressed || keys.d.pressed || keys.s.pressed) {
+        for(let i = 0; i < battleZones.length; i++) {
+            let battleZone = battleZones[i]
+
+            // On calcul la taille de zone en supperposition, Le point max en x du player - le point min en x de la box * Le point max en y du player - le point min en y de la box
+            let overlappingArea = 
+            (Math.min(
+                player.position.x + player.width, 
+                battleZone.position.x + battleZone.width
+            ));
+            (Math.min(
+                player.position.x + player.width, 
+                battleZone.position.x + battleZone.width
+            ) - 
+                Math.max(player.position.x, battleZone.position.x)) *
+            (Math.min(
+                player.position.y + player.height,
+                battleZone.position.y + battleZone.height
+            ) - 
+                Math.max(player.position.y, battleZone.position.y))
+            if (
+                rectangularCollision({
+                    rectangle1: player,
+                    rectangle2: battleZone
+                }) &&
+                //overlappingArea > (player.width * player.height) / 2  // Taille zone de supperpostion entre collision et player supérieur à la moitée de la taille global du player
+                Math.random() < 0.001 // chance de déclencer un combat
+            ) {
+                console.log('battle on');
+                audio.city.stop();
+                audio.initBattle.play();
+                battle.initiated = true;
+                gsap.to("#overlayDiv", {
+                    opacity: 1,
+                    repeat: 5,
+                    yoyo: true,
+                    duration: 0.4,
+                    onComplete() {
+                        gsap.to("#overlayDiv", {
+                            opacity: 1,
+                            duration: 0.4 
+                        })
+                    }
+                });
+                break
+            }
+        }
+    }
 
     let moving = true
 
@@ -173,7 +214,8 @@ function animate() {
                     }   //testBoundary
                 })      
             ) {
-                console.log('collision');
+                console.log();
+                //console.log('collision');
                 moving = false
                 break
             }
@@ -197,7 +239,7 @@ function animate() {
                     }   //testBoundary
                 })      
             ) {
-                console.log('collision');
+                //console.log('collision');
                 moving = false
                 break
             }
@@ -221,7 +263,7 @@ function animate() {
                     }   //testBoundary
                 })      
             ) {
-                console.log('collision');
+                //console.log('collision');
                 moving = false
                 break
             }
@@ -245,7 +287,7 @@ function animate() {
                     }   //testBoundary
                 })      
             ) {
-                console.log('collision');
+                //console.log('collision');
                 moving = false
                 break
             }
@@ -269,7 +311,8 @@ window.addEventListener('keydown', (e)  => {
             break
         case 's':
             keys.s.pressed = true            
-            lastKey = 's'           
+            lastKey = 's'   
+            audio.city.play();
             break
         case 'q':
             keys.q.pressed = true            
@@ -298,5 +341,12 @@ window.addEventListener('keyup', (e)  => {
         case 'd':
             keys.d.pressed = false            
             break
+    }
+})
+
+let clicked = false
+addEventListener('click', () => {
+    if(!clicked) {
+        clicked = true;
     }
 })

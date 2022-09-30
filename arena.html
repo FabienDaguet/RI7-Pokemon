@@ -19,12 +19,18 @@
             <button class="button-header pokeText button-poke" id="pokedex">Pokedex</button>
             <button class="button-header pokeText button-arena" id="arene">Arène</button>
         </div> -->
-        <div class="arenaContainer hidden">
+        <div class="arenaContainer">
+            <div id="overlayDiv" class="arena-battle"><img class="transition-battle" src="img/background.png" alt="battle-transition"></div>
             <canvas class="canvas"></canvas>
         </div>
         
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js" integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.2/gsap.min.js" integrity="sha512-gsEItzcNkWxfxHjr4BaEZAd9YuRWYjxnj7c/yukcZ0/nWehUb5TjJNyyv1ApCU2DFH/qgw+stFZHPOKnoQnIuQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script type = "module" src="modules/css.js"></script>
+        <script src="modules/audio.js"></script>
         <script src="data/collisions.js"></script>
+        <script src="data/battleZones.js"></script>
+        <script src="modules/classes.js"></script>
         <script src="modules/tileset.js"></script>
     </body>
 </html>
