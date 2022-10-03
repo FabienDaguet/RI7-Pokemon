@@ -14,7 +14,7 @@ function load() {
 window.onscroll = function() {
 
     if (window.innerHeight + window.pageYOffset >= document.body.offsetHeight) {
-        console.log('tets', limit, offMultiplicator, "https://pokeapi.co/api/v2/pokemon?limit="+limit+"&offset="+(limit*offMultiplicator));
+        console.log('en bas')
         load()
         
     }

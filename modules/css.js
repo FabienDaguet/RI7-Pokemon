@@ -38,7 +38,10 @@ export function translateCard(event) {
     let x = vw.toPrecision(2) * 100
     let dynamicStyles = null;
 
-    myTarget.style.animation = 'up 0.5 ease forward';
+    myTarget.style.animation = 'up 5s ease forwards';
+    /* setTimeout(function(){
+        myTarget.style.animation = '';
+    }, 550); */
     myTarget.style.top = y;
     myTarget.style.left = x;
 
@@ -55,15 +58,41 @@ export function translateCard(event) {
     addAnimation(`
         @keyframes up { 
             0% {
-                transform-origin: center; 
+                z-index: 5;
             }
-            50% {
+            5% {
+                box-shadow: 10px 10px 10px rgba(69, 69, 69, 0.817);
+                z-index: 5;
+            }
+            10% {
+                transform-origin: center; 
+                transform: perspective(200px) translate3d(-1rem, -1rem, 1rem);
+                box-shadow: 10px 10px 10px rgba(69, 69, 69, 0.817);
+                z-index: 5;
+            }
+            40% {
+                top: `+y+`%; 
+                left: `+x+`%;
+                transform: perspective(200px) translate3d(-1rem, -1rem, 1rem);
+                transform: rotate(30deg);
+                position: fixed;
+                transform-origin: center; 
+                box-shadow: 10px 10px 10px rgba(69, 69, 69, 0.817);
+                z-index: 5
+            }
+            /* 95% {
+                transform: rotate(30deg)
                 box-shadow: 10px 10px 10px rgba(69, 69, 69, 0.817);
             }
             100% {
-                transform: perspective(200px) translate3d(-1rem, -1rem, 1rem); 
-                z-index: 3;
-            }
+                position: absolute;
+                top: 50%; 
+                left: 50%;
+                transform-origin: center;
+                transform: translate(-50%, -50%);
+                box-shadow: 49px 40px 40px rgba(69, 69, 69, 0.817);
+                z-index: 5;
+            } */
         }
     `);
     
